@@ -37,12 +37,6 @@ defmodule Drum.Decoder do
     """ <> Enum.map_join(tracks, "\n", &String.Chars.to_string/1) <> "\n"
   end
 
-  defp decode_sheet(<< track_id :: integer-size(8), word_size :: integer-size(32), track :: binary >>, []) do
-    << track_name :: binary-size(word_size), track_pattern :: binary-size(16), rest :: binary >> = track
-    new_track = %Drum.Track{ id: track_id, name: track_name, pattern: to_char_list(track_pattern) }
-    decode_sheet(rest, [new_track])
-  end
-
   defp decode_sheet(<< track_id :: integer-size(8), word_size :: integer-size(32), track :: binary >>, tracks) do
     << track_name :: binary-size(word_size), track_pattern :: binary-size(16), rest :: binary >> = track
     new_track = %Drum.Track{ id: track_id, name: track_name, pattern: to_char_list(track_pattern) }
