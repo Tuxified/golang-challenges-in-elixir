@@ -16,11 +16,16 @@ end
 defmodule Drum.Decoder do
   def decode_file(path) do
     binary_content = File.read! path
+
     << "SPLICE",
-      _sheet_size :: integer-size(64)-big,
+      sheet_size  :: integer-size(64)-big,
       raw_version :: binary-size(32),
       raw_tempo   :: float-size(32)-little,
-      raw_sheet   :: binary >> = binary_content
+      rest        :: binary >> = binary_content
+
+    # correct sheet_size by subtracting version & temp
+    sheet_size = sheet_size - 32 - 4
+    << raw_sheet  :: binary-size(sheet_size), _junk :: binary >> = rest
 
     version = stringify_version raw_version
     tracks =  decode_sheet raw_sheet, []
